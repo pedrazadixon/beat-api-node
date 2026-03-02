@@ -63,7 +63,8 @@ router.get("/extract", async (req, res) => {
     res.json({
       success: true,
       data: {
-        streamUrl: streamUrl || null,
+        rawUrl: streamUrl || null,
+        streamUrl: encodeURIComponent(streamUrl),
       },
     });
 
@@ -228,7 +229,11 @@ router.get("/info", async (req, res) => {
  */
 router.get("/proxy", async (req, res) => {
   try {
-    const { url: streamUrl } = req.query;
+    let streamUrl;
+
+    const { url } = req.query;
+
+    streamUrl = decodeURIComponent(url);
 
     if (!streamUrl) {
       return res.status(400).json({
