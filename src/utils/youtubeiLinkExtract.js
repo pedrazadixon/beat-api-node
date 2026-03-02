@@ -12,7 +12,11 @@ Platform.shim.eval = async (data, env) => {
 
 async function getVideoLinks(videoId) {
 
-    const yt = await Innertube.create({ cache: new UniversalCache(false), generate_session_locally: true });
+    const yt = await Innertube.create({
+        cache: new UniversalCache(false),
+        generate_session_locally: true,
+        cookie: process.env.YT_COOKIE || ''
+    });
 
     // console.info(`\nObteniendo enlaces para video: ${videoId}\n`);
 
@@ -23,10 +27,6 @@ async function getVideoLinks(videoId) {
     const duration = info.basic_info?.duration || 0;
     // console.info(`Título: ${title}`);
     // console.info(`Duración: ${duration}s\n`);
-
-
-    // put info.streaming_data?.adaptive_formats into a file
-    fs.writeFileSync('adaptive_formats.json', JSON.stringify(info.streaming_data, null, 2));
 
     const allFormats = [
         ...(info.streaming_data?.adaptive_formats || []),
