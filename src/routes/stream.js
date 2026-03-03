@@ -324,7 +324,9 @@ router.get("/proxy", async (req, res) => {
     });
 
     // Force audio MIME type to prevent ORB blocking by browsers
-    res.setHeader("Content-Type", "audio/webm");
+    if (response.headers["content-type"] === "video/mp4") {
+      res.setHeader("Content-Type", "audio/webm");
+    }
 
     // Ensure accept-ranges is set for seeking
     if (!response.headers["accept-ranges"]) {
@@ -444,7 +446,9 @@ router.get("/play", async (req, res) => {
     });
 
     // Force audio MIME type to prevent ORB blocking by browsers
-    res.setHeader("Content-Type", "audio/webm");
+    if (response.headers["content-type"] === "video/mp4") {
+      res.setHeader("Content-Type", "audio/webm");
+    }
 
     if (!response.headers["accept-ranges"]) {
       res.setHeader("Accept-Ranges", "bytes");
