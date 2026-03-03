@@ -307,6 +307,8 @@ router.get("/proxy", async (req, res) => {
       validateStatus: (status) => status >= 200 && status < 400,
     });
 
+    console.log(response.headers);
+
     // Forward relevant headers to the client
     const headersToForward = [
       "content-length",
@@ -321,14 +323,8 @@ router.get("/proxy", async (req, res) => {
       }
     });
 
-    // Normalize Content-Type: YouTube returns "video/mp4" for combined streams,
-    // but browsers block "video/*" MIME via ORB when loaded by an <audio> element.
-    // Force "audio/mp4" so the browser accepts it for audio playback.
-    let contentType = response.headers["content-type"] || "application/octet-stream";
-    if (contentType.startsWith("video/mp4")) {
-      contentType = "audio/mp4";
-    }
-    res.setHeader("Content-Type", contentType);
+    // Force audio MIME type to prevent ORB blocking by browsers
+    res.setHeader("Content-Type", "audio/webm");
 
     // Ensure accept-ranges is set for seeking
     if (!response.headers["accept-ranges"]) {
@@ -447,12 +443,8 @@ router.get("/play", async (req, res) => {
       }
     });
 
-    // Normalize Content-Type for audio playback
-    let contentType = response.headers["content-type"] || "application/octet-stream";
-    if (contentType.startsWith("video/mp4")) {
-      contentType = "audio/mp4";
-    }
-    res.setHeader("Content-Type", contentType);
+    // Force audio MIME type to prevent ORB blocking by browsers
+    res.setHeader("Content-Type", "audio/webm");
 
     if (!response.headers["accept-ranges"]) {
       res.setHeader("Accept-Ranges", "bytes");
